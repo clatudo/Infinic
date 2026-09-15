@@ -1,0 +1,836 @@
+import React, { useState, useEffect } from "react";
+import {
+    Wrench,
+    Smartphone,
+    Laptop,
+    Building2,
+    Info,
+    FileText,
+    Search,
+    Menu,
+    X,
+    ShieldCheck,
+    Clock,
+    MapPin,
+    Phone,
+    Mail,
+    ChevronRight,
+    MessageCircle,
+    Award,
+    Lock,
+    CheckCircle2,
+    ArrowRight,
+    Star,
+    ExternalLink,
+    Cpu,
+    Sparkles
+} from "lucide-react";
+
+export interface NavLinkItem {
+    label: string;
+    href: string;
+    icon: React.ComponentType<{ className?: string }>;
+    badge?: string;
+}
+
+export interface SiteLayoutProps {
+    children?: React.ReactNode;
+    activePath?: string;
+    onNavigate?: (path: string) => void;
+}
+
+export interface WhatsAppButtonProps {
+    phoneNumber?: string;
+    defaultMessage?: string;
+    className?: string;
+}
+
+export interface LogoProps {
+    className?: string;
+    size?: "sm" | "md" | "lg";
+    onClick?: () => void;
+}
+
+export const NAV_ITEMS: readonly NavLinkItem[] = [
+    {
+        label: "Celular & Tablet",
+        href: "/conserto-celular-tablet",
+        icon: Smartphone,
+    },
+    {
+        label: "Computador & Notebook",
+        href: "/manutencao-computador-notebook",
+        icon: Laptop,
+    },
+    {
+        label: "Empresas & Domicílio",
+        href: "/atendimento-domiciliar-empresas",
+        icon: Building2,
+        badge: "B2B",
+    },
+    {
+        label: "Sobre Nós",
+        href: "/sobre-nos",
+        icon: Info,
+    },
+] as const;
+
+export const DEFAULT_WHATSAPP_NUMBER = "5511999998888";
+export const DEFAULT_WHATSAPP_MSG = "Olá! Gostaria de solicitar um orçamento para conserto do meu dispositivo com a Infinic.";
+
+export const InfinicLogo: React.FC<LogoProps> = ({
+    className = "",
+    size = "md",
+    onClick
+}) => {
+    const heightClass = size === "sm" ? "h-7" : size === "lg" ? "h-12" : "h-9";
+
+    return (
+        <button
+            type="button"
+            onClick={onClick}
+            className={`inline-flex items-center gap-2.5 focus:outline-none focus:ring-2 focus:ring-[#FACC15] rounded-md p-1 transition-opacity hover:opacity-95 text-left ${className}`}
+            aria-label="Infinic Assistência Técnica - Página Inicial"
+        >
+            <div className={`flex items-center ${heightClass}`}>
+                {/* Símbolo do Infinito Vetorial com Curvatura Precisa */}
+                <svg
+                    viewBox="0 0 100 45"
+                    className="h-full w-auto fill-current text-[#FACC15] drop-shadow-sm"
+                    aria-hidden="true"
+                >
+                    <path d="M 30,7.5 C 17.58,7.5 7.5,17.58 7.5,30 C 7.5,42.42 17.58,52.5 30,52.5 C 40.23,52.5 48.81,45.66 51.48,36.21 L 52.5,32.61 L 53.52,36.21 C 56.19,45.66 64.77,52.5 75,52.5 C 87.42,52.5 97.5,42.42 97.5,30 C 97.5,17.58 87.42,7.5 75,7.5 C 64.77,7.5 56.19,14.34 53.52,23.79 L 52.5,27.39 L 51.48,23.79 C 48.81,14.34 40.23,7.5 30,7.5 Z M 30,17.5 C 36.9,17.5 42.5,23.1 42.5,30 C 42.5,36.9 36.9,42.5 30,42.5 C 23.1,42.5 17.5,36.9 17.5,30 C 17.5,23.1 23.1,17.5 30,17.5 Z M 75,17.5 C 81.9,17.5 87.5,23.1 87.5,30 C 87.5,36.9 81.9,42.5 75,42.5 C 68.1,42.5 62.5,36.9 62.5,30 C 62.5,23.1 68.1,17.5 75,17.5 Z" transform="scale(0.85) translate(4, -2)" />
+                </svg>
+
+                {/* Divisor Vertical */}
+                <div className="h-2/3 w-[2px] bg-[#FACC15] mx-2.5 rounded-full opacity-90" />
+
+                {/* Tipografia da Marca em Montserrat/Heading Style */}
+                <span className="font-extrabold tracking-wider text-[#18181B] text-xl md:text-2xl uppercase select-none">
+                    INFINIC
+                </span>
+            </div>
+        </button>
+    );
+};
+
+export interface NavbarProps {
+    currentPath?: string;
+    onNavigate?: (path: string) => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+    currentPath = "/",
+    onNavigate
+}) => {
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
+    const [isScrolled, setIsScrolled] = useState<boolean>(false);
+
+    useEffect(() => {
+        const handleScroll = (): void => {
+            setIsScrolled(window.scrollY > 10);
+        };
+
+        window.addEventListener("scroll", handleScroll, { passive: true });
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const handleLinkClick = (href: string): void => {
+        setIsMobileMenuOpen(false);
+        if (onNavigate) {
+            onNavigate(href);
+        }
+    };
+
+    return (
+        <header
+            className={`sticky top-0 z-40 transition-all duration-200 border-b border-zinc-200/80 ${isScrolled
+                    ? "bg-white/95 backdrop-blur-md shadow-sm py-2"
+                    : "bg-[#F4F4F5]/90 backdrop-blur-md py-3"
+                }`}
+        >
+            {/* Top Banner Informativo de Confiança */}
+            <div className="hidden lg:block bg-[#18181B] text-white text-xs py-1.5 px-4 mb-2 -mt-3">
+                <div className="max-w-7xl mx-auto flex justify-between items-center">
+                    <div className="flex items-center gap-6">
+                        <span className="inline-flex items-center gap-1.5 text-zinc-300">
+                            <ShieldCheck className="w-3.5 h-3.5 text-[#FACC15]" />
+                            Garantia de 90 dias com laudo em todos os reparos
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 text-zinc-300">
+                            <Award className="w-3.5 h-3.5 text-[#FACC15]" />
+                            Peças de Alta Procedência & Diagnóstico Expresso
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-4 text-zinc-300">
+                        <span className="inline-flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-[#FACC15]" />
+                            Seg - Sex: 08h às 18h | Sáb: 08h às 12h
+                        </span>
+                        <a
+                            href="tel:08005559876"
+                            className="hover:text-[#FACC15] font-semibold transition-colors flex items-center gap-1"
+                        >
+                            <Phone className="w-3 h-3 text-[#FACC15]" />
+                            0800 555 9876
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between gap-4">
+                    {/* Logo Principal */}
+                    <InfinicLogo onClick={() => handleLinkClick("/")} />
+
+                    {/* Navegação Desktop */}
+                    <nav className="hidden md:flex items-center gap-1 lg:gap-2" aria-label="Menu principal">
+                        {NAV_ITEMS.map((item) => {
+                            const isActive = currentPath === item.href;
+                            const IconComponent = item.icon;
+
+                            return (
+                                <button
+                                    key={item.href}
+                                    type="button"
+                                    onClick={() => handleLinkClick(item.href)}
+                                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer ${isActive
+                                            ? "text-[#18181B] bg-white shadow-xs border-b-2 border-[#FACC15]"
+                                            : "text-zinc-700 hover:text-[#18181B] hover:bg-zinc-200/60"
+                                        }`}
+                                >
+                                    <IconComponent className={`w-4 h-4 ${isActive ? "text-[#18181B]" : "text-zinc-500"}`} />
+                                    <span>{item.label}</span>
+                                    {item.badge && (
+                                        <span className="ml-1 px-1.5 py-0.5 text-[10px] font-bold bg-[#FACC15] text-[#18181B] rounded">
+                                            {item.badge}
+                                        </span>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </nav>
+
+                    {/* Botões de Ação Rápida (Desktop) */}
+                    <div className="hidden md:flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => handleLinkClick("/status-os")}
+                            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold text-[#18181B] bg-white border border-zinc-300 hover:bg-zinc-100 transition-colors shadow-2xs"
+                        >
+                            <Search className="w-3.5 h-3.5 text-zinc-700" />
+                            Rastrear O.S.
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleLinkClick("/orcamento")}
+                            className="inline-flex items-center justify-center rounded-lg bg-[#FACC15] text-[#18181B] font-bold px-4 py-2 text-xs uppercase tracking-wider shadow-sm hover:bg-[#EAB308] hover:scale-105 active:scale-95 transition-all"
+                        >
+                            Solicitar Orçamento
+                        </button>
+                    </div>
+
+                    {/* Botão Menu Mobile */}
+                    <div className="flex items-center gap-2 md:hidden">
+                        <button
+                            type="button"
+                            onClick={() => handleLinkClick("/status-os")}
+                            className="p-2 text-zinc-700 hover:text-[#18181B] rounded-lg bg-white border border-zinc-200"
+                            aria-label="Rastrear Ordem de Serviço"
+                        >
+                            <Search className="w-5 h-5" />
+                        </button>
+
+                        <button
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                            type="button"
+                            className="p-2 rounded-lg text-zinc-800 hover:bg-zinc-200/80 focus:outline-none focus:ring-2 focus:ring-[#FACC15]"
+                            aria-expanded={isMobileMenuOpen}
+                            aria-label="Alternar Menu de Navegação"
+                        >
+                            {isMobileMenuOpen ? (
+                                <X className="w-6 h-6 text-[#18181B]" />
+                            ) : (
+                                <Menu className="w-6 h-6 text-[#18181B]" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {isMobileMenuOpen && (
+                <div className="md:hidden border-t border-zinc-200 bg-white px-4 pt-3 pb-6 shadow-xl animate-in slide-in-from-top-2">
+                    <div className="space-y-1">
+                        {NAV_ITEMS.map((item) => {
+                            const isActive = currentPath === item.href;
+                            const IconComponent = item.icon;
+
+                            return (
+                                <button
+                                    key={item.href}
+                                    type="button"
+                                    onClick={() => handleLinkClick(item.href)}
+                                    className={`w-full flex items-center justify-between px-3 py-3 rounded-lg text-base font-medium transition-colors ${isActive
+                                            ? "bg-zinc-100 text-[#18181B] font-bold border-l-4 border-[#FACC15]"
+                                            : "text-zinc-700 hover:bg-zinc-50"
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <IconComponent className="w-5 h-5 text-zinc-500" />
+                                        <span>{item.label}</span>
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-zinc-400" />
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div className="mt-5 pt-4 border-t border-zinc-200 flex flex-col gap-3">
+                        <button
+                            type="button"
+                            onClick={() => handleLinkClick("/status-os")}
+                            className="flex items-center justify-center gap-2 w-full py-3 rounded-lg text-sm font-bold text-[#18181B] bg-zinc-100 border border-zinc-300"
+                        >
+                            <Search className="w-4 h-4" />
+                            Consultar Status de Ordem de Serviço
+                        </button>
+
+                        <button
+                            type="button"
+                            onClick={() => handleLinkClick("/orcamento")}
+                            className="w-full text-center py-3 text-sm font-bold uppercase rounded-lg bg-[#FACC15] text-[#18181B] hover:bg-[#EAB308] shadow-sm"
+                        >
+                            Solicitar Orçamento Grátis
+                        </button>
+
+                        <div className="flex justify-between items-center px-2 pt-2 text-xs text-zinc-500">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#FACC15]/20 text-[#854D0E] border border-[#FACC15]/40">
+                                90 Dias de Garantia
+                            </span>
+                            <span className="flex items-center gap-1 text-zinc-600">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+                                Peças Testadas
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </header>
+    );
+};
+
+export interface FooterProps {
+    onNavigate?: (path: string) => void;
+}
+
+export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
+    const handleNav = (path: string) => {
+        if (onNavigate) {
+            onNavigate(path);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+    };
+
+    return (
+        <footer className="bg-[#18181B] text-white pt-16 pb-12 border-t-4 border-[#FACC15]">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Grid Principal do Rodapé */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-zinc-800">
+
+                    {/* Colunas 1 & 2: Identidade e Proposta de Valor */}
+                    <div className="lg:col-span-2 space-y-4">
+                        <div className="bg-white/10 p-2 rounded-lg inline-block backdrop-blur-sm">
+                            <InfinicLogo onClick={() => handleNav("/")} />
+                        </div>
+
+                        <p className="text-zinc-400 text-sm leading-relaxed max-w-md">
+                            A Infinic é referência em assistência técnica de alta precisão para smartphones, notebooks e computadores. Diagnósticos transparentes, atendimento express e garantia total de 90 dias.
+                        </p>
+
+                        <div className="inline-flex items-center gap-2.5 bg-zinc-900 border border-zinc-800 rounded-lg p-3 text-xs text-zinc-300">
+                            <ShieldCheck className="w-5 h-5 text-[#FACC15] shrink-0" />
+                            <span>
+                                <strong className="text-white block">Garantia Segura de 90 Dias</strong>
+                                Todas as substituições acompanham laudo técnico e peças de procedência.
+                            </span>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-2">
+                            <div className="flex items-center gap-1.5 text-xs text-zinc-400 bg-zinc-900 px-3 py-1.5 rounded-md border border-zinc-800">
+                                <Lock className="w-3.5 h-3.5 text-[#FACC15]" />
+                                Dados Protegidos
+                            </div>
+                            <div className="flex items-center gap-1.5 text-xs text-zinc-400 bg-zinc-900 px-3 py-1.5 rounded-md border border-zinc-800">
+                                <Award className="w-3.5 h-3.5 text-[#FACC15]" />
+                                Técnicos Especialistas
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Coluna 3: Especialidades */}
+                    <div className="space-y-3">
+                        <h3 className="font-bold text-white text-base tracking-wider uppercase border-l-2 border-[#FACC15] pl-2">
+                            Especialidades
+                        </h3>
+                        <ul className="space-y-2.5 text-sm text-zinc-400">
+                            <li>
+                                <button
+                                    onClick={() => handleNav("/conserto-celular-tablet")}
+                                    className="hover:text-[#FACC15] transition-colors flex items-center gap-1.5 text-left"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-[#FACC15]" />
+                                    Troca de Tela & Bateria
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => handleNav("/conserto-celular-tablet")}
+                                    className="hover:text-[#FACC15] transition-colors flex items-center gap-1.5 text-left"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-[#FACC15]" />
+                                    Desoxidação de Placas
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => handleNav("/manutencao-computador-notebook")}
+                                    className="hover:text-[#FACC15] transition-colors flex items-center gap-1.5 text-left"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-[#FACC15]" />
+                                    Upgrade SSD & Memória RAM
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => handleNav("/manutencao-computador-notebook")}
+                                    className="hover:text-[#FACC15] transition-colors flex items-center gap-1.5 text-left"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-[#FACC15]" />
+                                    Reparo em Placa-Mãe
+                                </button>
+                            </li>
+                            <li>
+                                <button
+                                    onClick={() => handleNav("/atendimento-domiciliar-empresas")}
+                                    className="hover:text-[#FACC15] transition-colors flex items-center gap-1.5 text-left"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5 text-[#FACC15]" />
+                                    Suporte T.I. Corporativo B2B
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Coluna 4: Links Rápidos */}
+                    <div className="space-y-3">
+                        <h3 className="font-bold text-white text-base tracking-wider uppercase border-l-2 border-[#FACC15] pl-2">
+                            Navegação
+                        </h3>
+                        <ul className="space-y-2.5 text-sm text-zinc-400">
+                            <li>
+                                <button onClick={() => handleNav("/status-os")} className="hover:text-[#FACC15] transition-colors">
+                                    Rastrear Ordem de Serviço
+                                </button>
+                            </li>
+                            <li>
+                                <button onClick={() => handleNav("/orcamento")} className="hover:text-[#FACC15] transition-colors">
+                                    Solicitar Orçamento Online
+                                </button>
+                            </li>
+                            <li>
+                                <button onClick={() => handleNav("/atendimento-domiciliar-empresas")} className="hover:text-[#FACC15] transition-colors">
+                                    Atendimento Leva e Traz
+                                </button>
+                            </li>
+                            <li>
+                                <button onClick={() => handleNav("/sobre-nos")} className="hover:text-[#FACC15] transition-colors">
+                                    Estrutura & Laboratório
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {/* Coluna 5: Atendimento & Localização */}
+                    <div className="space-y-3">
+                        <h3 className="font-bold text-white text-base tracking-wider uppercase border-l-2 border-[#FACC15] pl-2">
+                            Contato & Horário
+                        </h3>
+                        <div className="space-y-2.5 text-sm text-zinc-400">
+                            <p className="flex items-start gap-2">
+                                <MapPin className="w-4 h-4 text-[#FACC15] shrink-0 mt-0.5" />
+                                <span>Av. Central da Tecnologia, 1000 - Centro, SP</span>
+                            </p>
+                            <p className="flex items-center gap-2">
+                                <Phone className="w-4 h-4 text-[#FACC15] shrink-0" />
+                                <a href="tel:08005559876" className="hover:text-white transition-colors">
+                                    0800 555 9876
+                                </a>
+                            </p>
+                            <p className="flex items-center gap-2">
+                                <Mail className="w-4 h-4 text-[#FACC15] shrink-0" />
+                                <span>contato@infinic.com.br</span>
+                            </p>
+                            <div className="pt-2 border-t border-zinc-800 text-xs">
+                                <p className="text-zinc-300 font-semibold mb-1">Horário de Funcionamento:</p>
+                                <p>Segunda a Sexta: 08:00h às 18:00h</p>
+                                <p>Sábados: 08:00h às 12:00h</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Rodapé Inferior */}
+                <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+                    <p>© {new Date().getFullYear()} Infinic Assistência Técnica. Todos os direitos reservados.</p>
+                    <div className="flex items-center gap-6">
+                        <button onClick={() => handleNav("/sobre-nos")} className="hover:text-zinc-300 transition-colors">
+                            Termos de Garantia
+                        </button>
+                        <button onClick={() => handleNav("/sobre-nos")} className="hover:text-zinc-300 transition-colors">
+                            Política de Privacidade
+                        </button>
+                        <button onClick={() => handleNav("/status-os")} className="hover:text-[#FACC15] transition-colors font-semibold">
+                            Portal do Cliente OS
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    );
+};
+
+export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
+    phoneNumber = DEFAULT_WHATSAPP_NUMBER,
+    defaultMessage = DEFAULT_WHATSAPP_MSG,
+    className = "",
+}) => {
+    const encodedMessage = encodeURIComponent(defaultMessage);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+    return (
+        <div className={`fixed bottom-6 right-6 z-50 flex items-center group ${className}`}>
+            {/* Tooltip Hover Explicativo */}
+            <div className="hidden sm:flex items-center mr-3 px-3 py-1.5 rounded-lg bg-[#18181B] text-white text-xs font-semibold shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 border border-zinc-700 pointer-events-none">
+                <span className="w-2 h-2 rounded-full bg-green-400 animate-ping mr-2" />
+                Falar com Técnico Agora
+            </div>
+
+            {/* Botão Flutuante Principal */}
+            <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Falar pelo WhatsApp com a Infinic"
+                className="relative flex items-center justify-center w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-emerald-400/50"
+            >
+                {/* Efeito de Pulsar Circular */}
+                <span className="absolute -inset-1 rounded-full bg-emerald-500 opacity-35 animate-ping pointer-events-none" />
+
+                {/* Ícone WhatsApp */}
+                <MessageCircle className="w-8 h-8 relative z-10 fill-current text-white" />
+            </a>
+        </div>
+    );
+};
+
+export const SiteLayout: React.FC<SiteLayoutProps> = ({
+    children,
+    activePath = "/",
+    onNavigate
+}) => {
+    return (
+        <div className="flex min-h-screen flex-col bg-[#F4F4F5] text-[#18181B] selection:bg-[#FACC15] selection:text-[#18181B]">
+            {/* Header Sticky com Navbar */}
+            <Navbar currentPath={activePath} onNavigate={onNavigate} />
+
+            {/* Conteúdo Principal */}
+            <main className="flex-1 w-full">
+                {children}
+            </main>
+
+            {/* Botão Flutuante do WhatsApp */}
+            <WhatsAppButton />
+
+            {/* Rodapé Institucional */}
+            <Footer onNavigate={onNavigate} />
+        </div>
+    );
+};
+
+interface PageViewProps {
+    onNavigate: (path: string) => void;
+}
+
+const HomePageView: React.FC<PageViewProps> = ({ onNavigate }) => {
+    const [osInput, setOsInput] = useState("");
+
+    return (
+        <div className="space-y-16 pb-12">
+            {/* Hero Section */}
+            <section className="relative overflow-hidden bg-gradient-to-b from-white to-[#F4F4F5] pt-12 pb-20 border-b border-zinc-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+                        <div className="lg:col-span-7 space-y-6 text-left">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FACC15]/20 text-[#854D0E] border border-[#FACC15]/40 text-xs font-bold tracking-wide uppercase">
+                                <ShieldCheck className="w-4 h-4 text-[#854D0E]" />
+                                [90 Dias de Garantia] em Todos os Reparos
+                            </div>
+
+                            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#18181B] leading-tight tracking-tight">
+                                Assistência Técnica de Alta Precisão para o seu Dispositivo
+                            </h1>
+
+                            <p className="text-base sm:text-lg text-zinc-600 max-w-xl leading-relaxed">
+                                Reparo avançado para smartphones, notebooks e computadores. Diagnóstico transparente, peças com procedência e técnicos certificados.
+                            </p>
+
+                            {/* Rastreio Rápido de OS na Hero */}
+                            <div className="bg-white p-4 rounded-xl border border-zinc-200 shadow-sm max-w-xl">
+                                <p className="text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                                    <Search className="w-3.5 h-3.5 text-[#18181B]" />
+                                    Já é cliente? Acompanhe o status do seu conserto:
+                                </p>
+                                <div className="flex flex-col sm:flex-row gap-2">
+                                    <input
+                                        type="text"
+                                        value={osInput}
+                                        onChange={(e) => setOsInput(e.target.value)}
+                                        placeholder="Digite o número da sua O.S. (ex: INF-2026-1001)"
+                                        className="flex-1 px-3.5 py-2.5 rounded-lg border border-zinc-300 text-sm focus:outline-none focus:ring-2 focus:ring-[#FACC15] bg-zinc-50"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => onNavigate("/status-os")}
+                                        className="px-5 py-2.5 rounded-lg bg-[#18181B] text-white font-bold text-sm hover:bg-zinc-800 transition-colors inline-flex items-center justify-center gap-2"
+                                    >
+                                        <span>Rastrear</span>
+                                        <ArrowRight className="w-4 h-4 text-[#FACC15]" />
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Ações Primárias */}
+                            <div className="flex flex-wrap items-center gap-4 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => onNavigate("/orcamento")}
+                                    className="px-6 py-3.5 rounded-lg bg-[#FACC15] text-[#18181B] font-bold text-sm hover:bg-[#EAB308] hover:scale-105 active:scale-95 transition-all shadow-sm"
+                                >
+                                    Solicitar Orçamento Grátis
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => onNavigate("/atendimento-domiciliar-empresas")}
+                                    className="px-6 py-3.5 rounded-lg bg-white border border-zinc-300 text-zinc-800 font-semibold text-sm hover:bg-zinc-100 transition-colors shadow-2xs"
+                                >
+                                    Serviço Leva e Traz / B2B
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Card de Destaque Visual */}
+                        <div className="lg:col-span-5">
+                            <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-lg space-y-6 relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-[#FACC15]/20 rounded-full blur-2xl pointer-events-none" />
+
+                                <div className="flex items-center justify-between border-b border-zinc-100 pb-4">
+                                    <span className="font-extrabold text-sm uppercase tracking-wider text-zinc-800">
+                                        Laboratório Especializado
+                                    </span>
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                                        Express 2h
+                                    </span>
+                                </div>
+
+                                <div className="space-y-4">
+                                    <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 border border-zinc-100">
+                                        <Smartphone className="w-6 h-6 text-[#18181B] shrink-0 mt-0.5" />
+                                        <div>
+                                            <h4 className="text-sm font-bold text-zinc-900">Smartphones & Tablets</h4>
+                                            <p className="text-xs text-zinc-500">Troca de display, bateria, conectores e desoxidação química.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 border border-zinc-100">
+                                        <Laptop className="w-6 h-6 text-[#18181B] shrink-0 mt-0.5" />
+                                        <div>
+                                            <h4 className="text-sm font-bold text-zinc-900">Notebooks & MacBooks</h4>
+                                            <p className="text-xs text-zinc-500">Reparo de placa lógica, reballing, troca de teclado e upgrade NVMe.</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 border border-zinc-100">
+                                        <Building2 className="w-6 h-6 text-[#18181B] shrink-0 mt-0.5" />
+                                        <div>
+                                            <h4 className="text-sm font-bold text-zinc-900">Atendimento Corporativo</h4>
+                                            <p className="text-xs text-zinc-500">Manutenção preventiva de parque de máquinas e contratos SLA.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="pt-2 flex items-center justify-between text-xs text-zinc-600 border-t border-zinc-100">
+                                    <span className="flex items-center gap-1 font-semibold">
+                                        <Lock className="w-3.5 h-3.5 text-[#FACC15]" />
+                                        Privacidade total dos seus arquivos
+                                    </span>
+                                    <span className="text-[#854D0E] font-bold">100% Seguro</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            {/* Grid de Modalidades de Atendimento */}
+            <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center max-w-2xl mx-auto mb-10 space-y-2">
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-[#18181B]">
+                        Como Funciona o Atendimento Infinic
+                    </h2>
+                    <p className="text-zinc-600 text-sm">
+                        Escolha a modalidade que melhor se adapta à sua rotina e necessidade.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-2xs hover:shadow-md transition-all">
+                        <div className="w-10 h-10 rounded-lg bg-[#FACC15]/20 flex items-center justify-center text-[#18181B] font-bold mb-4">
+                            1
+                        </div>
+                        <h3 className="text-base font-bold text-[#18181B] mb-2">Balcão Express</h3>
+                        <p className="text-xs text-zinc-600 leading-relaxed">
+                            Traga diretamente à nossa unidade central e acompanhe a triagem técnica inicial em tempo real.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-2xs hover:shadow-md transition-all">
+                        <div className="w-10 h-10 rounded-lg bg-[#FACC15]/20 flex items-center justify-center text-[#18181B] font-bold mb-4">
+                            2
+                        </div>
+                        <h3 className="text-base font-bold text-[#18181B] mb-2">Serviço Leva e Traz</h3>
+                        <p className="text-xs text-zinc-600 leading-relaxed">
+                            Coletamos seu equipamento com lacre de segurança e devolvemos consertado com garantia.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-2xs hover:shadow-md transition-all">
+                        <div className="w-10 h-10 rounded-lg bg-[#FACC15]/20 flex items-center justify-center text-[#18181B] font-bold mb-4">
+                            3
+                        </div>
+                        <h3 className="text-base font-bold text-[#18181B] mb-2">Suporte em Domicílio</h3>
+                        <p className="text-xs text-zinc-600 leading-relaxed">
+                            Técnico especializado no local para redes, configuração, backups e diagnósticos residenciais.
+                        </p>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl border border-zinc-200 shadow-2xs hover:shadow-md transition-all">
+                        <div className="w-10 h-10 rounded-lg bg-[#FACC15]/20 flex items-center justify-center text-[#18181B] font-bold mb-4">
+                            4
+                        </div>
+                        <h3 className="text-base font-bold text-[#18181B] mb-2">Suporte Remoto Imediato</h3>
+                        <p className="text-xs text-zinc-600 leading-relaxed">
+                            Soluções de software, vírus e otimização executadas à distância com canal seguro e criptografado.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    );
+};
+
+const GenericPageView: React.FC<{ title: string; desc: string; onBack: () => void }> = ({
+    title,
+    desc,
+    onBack
+}) => (
+    <div className="max-w-4xl mx-auto px-4 py-16 text-center space-y-6">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-[#FACC15]/20 text-[#18181B] mx-auto">
+            <Cpu className="w-8 h-8 text-[#18181B]" />
+        </div>
+        <h1 className="text-3xl font-extrabold text-[#18181B]">{title}</h1>
+        <p className="text-zinc-600 text-base max-w-lg mx-auto">{desc}</p>
+        <div className="pt-4">
+            <button
+                type="button"
+                onClick={onBack}
+                className="px-6 py-2.5 rounded-lg bg-[#18181B] text-white font-bold text-sm hover:bg-zinc-800 transition-colors"
+            >
+                Voltar para a Página Inicial
+            </button>
+        </div>
+    </div>
+);
+
+export default function App(): React.ReactElement {
+    const [currentPath, setCurrentPath] = useState<string>("/");
+
+    const handleNavigate = (path: string): void => {
+        setCurrentPath(path);
+    };
+
+    const renderContent = () => {
+        switch (currentPath) {
+            case "/":
+                return <HomePageView onNavigate={handleNavigate} />;
+            case "/conserto-celular-tablet":
+                return (
+                    <GenericPageView
+                        title="Conserto Especializado de Celular & Tablet"
+                        desc="Troca de telas originais, substituição de bateria com garantia de 90 dias, desoxidação e reparo em placa."
+                        onBack={() => handleNavigate("/")}
+                    />
+                );
+            case "/manutencao-computador-notebook":
+                return (
+                    <GenericPageView
+                        title="Manutenção de Computador & Notebook"
+                        desc="Limpeza preventiva térmica, upgrades de memória RAM e SSD NVMe, reparo eletrônico em placas mãe."
+                        onBack={() => handleNavigate("/")}
+                    />
+                );
+            case "/atendimento-domiciliar-empresas":
+                return (
+                    <GenericPageView
+                        title="Atendimento Domiciliar & Empresas (B2B)"
+                        desc="Gestão e manutenção técnica corporativa com contrato SLA, suporte presencial e atendimento leva e traz seguro."
+                        onBack={() => handleNavigate("/")}
+                    />
+                );
+            case "/sobre-nos":
+                return (
+                    <GenericPageView
+                        title="Sobre a Infinic Assistência Técnica"
+                        desc="Conheça nossa bancada com instrumentação de ponta, microscópios de precisão e equipe qualificada."
+                        onBack={() => handleNavigate("/")}
+                    />
+                );
+            case "/orcamento":
+                return (
+                    <GenericPageView
+                        title="Solicitação de Orçamento Online"
+                        desc="Envie as especificações do seu aparelho e receba a prévia de custos e prazos de atendimento."
+                        onBack={() => handleNavigate("/")}
+                    />
+                );
+            case "/status-os":
+                return (
+                    <GenericPageView
+                        title="Consulta de Ordem de Serviço"
+                        desc="Digite o número da sua OS para acompanhar o diagnóstico, reparo e liberação para retirada."
+                        onBack={() => handleNavigate("/")}
+                    />
+                );
+            default:
+                return <HomePageView onNavigate={handleNavigate} />;
+        }
+    };
+
+    return (
+        <SiteLayout activePath={currentPath} onNavigate={handleNavigate}>
+            {renderContent()}
+        </SiteLayout>
+    );
+}
