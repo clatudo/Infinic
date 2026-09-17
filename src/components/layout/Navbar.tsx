@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+    LucideIcon,
     Smartphone,
     Laptop,
     Building2,
@@ -46,12 +47,19 @@ export function InfinicLogo() {
     );
 }
 
-const NAV_ITEMS = [
+interface NavItem {
+    label: string;
+    href: string;
+    icon: LucideIcon;
+    badge?: string;
+}
+
+const NAV_ITEMS: readonly NavItem[] = [
     { label: "Celular & Tablet", href: "/conserto-celular-tablet", icon: Smartphone },
     { label: "Computador & Notebook", href: "/manutencao-computador-notebook", icon: Laptop },
     { label: "Empresas & Domicílio", href: "/atendimento-domiciliar-empresas", icon: Building2, badge: "B2B" },
     { label: "Sobre Nós", href: "/sobre-nos", icon: Info },
-] as const;
+];
 
 export function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

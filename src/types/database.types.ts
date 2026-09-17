@@ -1,4 +1,12 @@
-export interface ServiceOrder {
+export type Json =
+    | string
+    | number
+    | boolean
+    | null
+    | { [key: string]: Json | undefined }
+    | Json[];
+
+export type ServiceOrder = {
     id: string;
     order_number: string;
     customer_name: string;
@@ -12,9 +20,9 @@ export interface ServiceOrder {
     total_amount: number | null;
     created_at: string;
     updated_at: string;
-}
+};
 
-export interface ServiceOrderPublicView {
+export type ServiceOrderPublicView = {
     order_number: string;
     customer_name: string;
     device_brand: string;
@@ -25,10 +33,9 @@ export interface ServiceOrderPublicView {
     warranty_until: string | null;
     created_at: string;
     updated_at: string;
-}
+};
 
-
-export interface LeadCapture {
+export type LeadCapture = {
     id: string;
     customer_name: string;
     customer_phone: string;
@@ -36,29 +43,40 @@ export interface LeadCapture {
     device_brand: string;
     device_model: string;
     issue_description: string;
-    service_type: "store_dropoff" | "courier_pickup" | "home_service" | "b2b_corporate";
+    service_type: "suporte_remoto" | "courier_pickup" | "home_service" | "b2b_corporate";
     created_at: string;
-}
+};
 
-export interface Database {
+export type Database = {
     public: {
         Tables: {
             service_orders: {
                 Row: ServiceOrder;
                 Insert: Omit<ServiceOrder, "id" | "created_at" | "updated_at">;
                 Update: Partial<Omit<ServiceOrder, "id">>;
+                Relationships: [];
             };
             lead_captures: {
                 Row: LeadCapture;
                 Insert: Omit<LeadCapture, "id" | "created_at">;
                 Update: Partial<Omit<LeadCapture, "id">>;
+                Relationships: [];
             };
+        };
+        Views: {
+            [_ in never]: never;
         };
         Functions: {
             get_service_order_by_number: {
                 Args: { p_order_number: string };
-                Returns: ServiceOrder[];
+                Returns: ServiceOrderPublicView[];
             };
         };
+        Enums: {
+            [_ in never]: never;
+        };
+        CompositeTypes: {
+            [_ in never]: never;
+        };
     };
-}
+};

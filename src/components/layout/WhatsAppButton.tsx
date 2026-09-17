@@ -1,5 +1,6 @@
 import React from "react";
 import { MessageCircle } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/constants.js";
 
 interface WhatsAppButtonProps {
     phoneNumber?: string;
@@ -7,11 +8,10 @@ interface WhatsAppButtonProps {
 }
 
 export function WhatsAppButton({
-    phoneNumber = "5511999998888",
     defaultMessage = "Olá! Gostaria de falar com um técnico da Infinic para tirar dúvidas sobre meu aparelho.",
 }: WhatsAppButtonProps) {
     const encoded = encodeURIComponent(defaultMessage);
-    const url = `https://wa.me/${phoneNumber}?text=${encoded}`;
+    const url = `https://wa.me/${SITE_CONFIG.whatsapp.number}?text=${encoded}`;
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex items-center group">

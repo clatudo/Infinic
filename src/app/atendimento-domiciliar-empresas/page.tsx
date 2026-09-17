@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Building2, Home, Truck, ShieldCheck, CheckCircle2, Clock, PhoneCall } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata = {
     title: "Atendimento em Domicílio e Empresas B2B",
@@ -19,7 +20,7 @@ export default function EmpresasDomicilioPage() {
                 <div className="pt-2 flex flex-wrap gap-4">
                     <Link href="/orcamento" className="btn-primary">Solicitar Proposta B2B</Link>
                     <a
-                        href="https://wa.me/5511999998888?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20contratos%20corporativos%20B2B%20da%20Infinic."
+                        href={`https://wa.me/${SITE_CONFIG.whatsapp.number}?text=Ol%C3%A1!%20Gostaria%20de%20informa%C3%A7%C3%B5es%20sobre%20contratos%20corporativos%20B2B%20da%20Infinic.`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="px-5 py-3 rounded-lg border border-zinc-300 font-bold text-sm bg-white hover:bg-zinc-100 flex items-center gap-2"

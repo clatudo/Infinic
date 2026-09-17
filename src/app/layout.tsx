@@ -5,6 +5,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 // Otimização e carregamento sem layout shift da tipografia para corpo e interface
 const inter = Inter({
@@ -93,6 +94,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             suppressHydrationWarning
         >
             <body className="min-h-screen bg-[#F4F4F5] text-[#18181B] font-sans antialiased selection:bg-[#FACC15] selection:text-[#18181B]">
+                <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
                 <QueryProvider>
                     <div className="flex min-h-screen flex-col">
                         <Navbar />

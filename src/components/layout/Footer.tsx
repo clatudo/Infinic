@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ShieldCheck, Lock, Award, ChevronRight, MapPin, Phone, Mail } from "lucide-react";
 import { InfinicLogo } from "./Navbar";
+import { SITE_CONFIG } from "@/lib/constants.js";
 
 export function Footer() {
     return (
@@ -113,13 +114,9 @@ export function Footer() {
                             Contato & Suporte
                         </h3>
                         <div className="space-y-2.5 text-sm text-zinc-400">
-                            <p className="flex items-start gap-2">
-                                <MapPin className="w-4 h-4 text-[#FACC15] shrink-0 mt-0.5" />
-                                <span>Av. Central da Tecnologia, 1000 - SP</span>
-                            </p>
                             <p className="flex items-center gap-2">
                                 <Phone className="w-4 h-4 text-[#FACC15] shrink-0" />
-                                <a href="tel:08005559876" className="hover:text-white">0800 555 9876</a>
+                                <a href={`tel:${SITE_CONFIG.whatsapp.number}`} className="hover:text-white">{SITE_CONFIG.whatsapp.display}</a>
                             </p>
                             <p className="flex items-center gap-2">
                                 <Mail className="w-4 h-4 text-[#FACC15] shrink-0" />
@@ -127,8 +124,8 @@ export function Footer() {
                             </p>
                             <div className="pt-2 border-t border-zinc-800 text-xs">
                                 <p className="text-zinc-300 font-semibold mb-1">Horário de Funcionamento:</p>
-                                <p>Segunda a Sexta: 08:00h às 18:00h</p>
-                                <p>Sábados: 08:00h às 12:00h</p>
+                                <p>Segunda a Sexta: 08:00h às 17:00h</p>
+                                <p>Sábados: 08:00h às 11:30h</p>
                             </div>
                         </div>
                     </div>

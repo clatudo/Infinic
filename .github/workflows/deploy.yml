@@ -1,0 +1,35 @@
+name: Deploy React via FTP
+
+on:
+  push:
+    branches:
+      - main  # Executa o deploy sempre que houver push na branch 'main'
+
+jobs:
+  web-deploy:
+    name: Build e Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Baixar o código do repositório
+      uses: actions/checkout@v4
+
+    - name: Configurar o Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-node: '20' # Modifique para a versão do Node que você usa, se necessário
+        cache: 'npm'
+
+    - name: Instalar dependências e gerar Build
+      run: |
+        npm ci
+        npm run build
+
+    - name: Enviar arquivos via FTP
+      uses: CJ/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./build/  # Se usar Vite, mude para ./dist/
+        server-dir: /public_html/  # Caminho da pasta pública no seu servidor

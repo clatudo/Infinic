@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useTrackOS } from "@/features/os-tracking/hooks/useTrackOS";
 import { ServiceOrderPublicView } from "@/types/database.types";
+import { SITE_CONFIG } from "@/lib/constants";
 
 // ==============================================================================
 // ETAPAS DO FLUXO OPERACIONAL DE MANUTENÇÃO
@@ -192,7 +193,7 @@ function StatusOsContent() {
                     </div>
                     <div className="pt-2">
                         <a
-                            href={`https://wa.me/5511999998888?text=${encodeURIComponent(`Olá! Não consegui localizar minha O.S. número ${activeQuery}. Poderiam me auxiliar?`)}`}
+                            href={`https://wa.me/${SITE_CONFIG.whatsapp.number}?text=${encodeURIComponent(`Olá! Não consegui localizar minha O.S. número ${activeQuery}. Poderiam me auxiliar?`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 text-xs font-bold text-[#18181B] bg-zinc-100 hover:bg-zinc-200 px-4 py-2.5 rounded-lg transition-colors"
@@ -249,10 +250,10 @@ function StatusOsContent() {
                                         <div
                                             key={step.key}
                                             className={`p-3.5 rounded-xl border transition-all ${isCurrent
-                                                    ? "bg-[#FACC15]/10 border-[#FACC15] shadow-xs"
-                                                    : isCompleted
-                                                        ? "bg-emerald-50/60 border-emerald-200"
-                                                        : "bg-zinc-50 border-zinc-200 opacity-60"
+                                                ? "bg-[#FACC15]/10 border-[#FACC15] shadow-xs"
+                                                : isCompleted
+                                                    ? "bg-emerald-50/60 border-emerald-200"
+                                                    : "bg-zinc-50 border-zinc-200 opacity-60"
                                                 }`}
                                         >
                                             <div className="flex items-center justify-between mb-2">
@@ -326,7 +327,7 @@ function StatusOsContent() {
                             </p>
                         </div>
                         <a
-                            href={`https://wa.me/5511999998888?text=${encodeURIComponent(`Olá! Estou acompanhando a O.S. ${order.order_number} (${order.device_brand} ${order.device_model}) e gostaria de falar sobre o reparo.`)}`}
+                            href={`https://wa.me/${SITE_CONFIG.whatsapp.number}?text=${encodeURIComponent(`Olá! Estou acompanhando a O.S. ${order.order_number} (${order.device_brand} ${order.device_model}) e gostaria de falar sobre o reparo.`)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="btn-primary text-xs uppercase tracking-wider shrink-0"

@@ -8,7 +8,7 @@ export interface CreateLeadPayload {
     device_brand: string;
     device_model: string;
     issue_description: string;
-    service_type: "store_dropoff" | "courier_pickup" | "home_service" | "b2b_corporate";
+    service_type: "suporte_remoto" | "courier_pickup" | "home_service" | "b2b_corporate";
 }
 
 export async function createLead(payload: CreateLeadPayload): Promise<LeadCapture> {
