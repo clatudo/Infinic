@@ -5,8 +5,11 @@ export const inngest = new Inngest({ id: "infinic-site" });
 
 // Esta é a função resiliente que cuida do envio do e-mail
 export const enviarNotificacaoOrcamento = inngest.createFunction(
-    { id: "enviar-alerta-orcamento", name: "Alerta de Novo Orçamento" },
-    { event: "app/orcamento.recebido" }, // Nome do evento
+    {
+        id: "enviar-alerta-orcamento",
+        name: "Alerta de Novo Orçamento",
+        triggers: [{ event: "app/orcamento.recebido" }],
+    },
     async ({ event, step }) => {
         // Forçamos o TypeScript a entender a estrutura dos dados recebidos
         const data = event.data as {
