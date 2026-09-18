@@ -21,6 +21,12 @@ jobs:
         cache: 'npm'
 
     - name: Instalar dependências e gerar Build
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        NEXT_PUBLIC_GA_ID: ${{ secrets.NEXT_PUBLIC_GA_ID }}
       run: |
         npm ci
         npm run build
@@ -31,5 +37,6 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./build/  # Se usar Vite, mude para ./dist/
+        local-dir: ./out/  # <-- Mude de ./build/ para ./out/ se for Next.js Export / antes estava local-dir: ./build/  # Se usar Vite, mude para ./dist/
         server-dir: /public_html/  # Caminho da pasta pública no seu servidor
+
