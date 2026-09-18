@@ -89,3 +89,33 @@ Em TypeScript, `interface` não possui assinatura de índice de string implícit
   - Limpeza imediata do erro individual no evento `onChange` / `onClick` de cada elemento.
 
 ---
+
+## [2026-09-17 21:25] - Integração com Google Analytics 4, Pipeline de Deploy FTP e Export Estático
+
+### Arquivos Modificados / Criados
+- [`.env.local`](file:///e:/Projetos/infinic/.env.local) *(Modificado)*
+- [`package.json`](file:///e:/Projetos/infinic/package.json) *(Modificado)*
+- [`src/app/layout.tsx`](file:///e:/Projetos/infinic/src/app/layout.tsx) *(Modificado)*
+- [`src/components/GoogleAnalytics.tsx`](file:///e:/Projetos/infinic/src/components/GoogleAnalytics.tsx) *(Novo)*
+- [`next.config.ts`](file:///e:/Projetos/infinic/next.config.ts) *(Modificado)*
+- [`.github/workflows/deploy.yml`](file:///e:/Projetos/infinic/.github/workflows/deploy.yml) *(Novo)*
+
+### Motivação Técnica
+1. **Métricas e Telemetria Unificada**: Centralizar o rastreamento do Google Analytics 4 (GA4) no layout raiz da aplicação para que todas as páginas e rotas sejam monitoradas automaticamente, sem duplicação de scripts e desacoplando o ID de medição via variável de ambiente.
+2. **Exportação Estática para Hospedagem Web**: Adequar o Next.js para geração de arquivos estáticos (`HTML`/`CSS`/`JS`), viabilizando a hospedagem em servidores tradicionais com suporte a FTP/cPanel sem necessidade de runtime Node.js dedicado.
+3. **Automação de CI/CD**: Automatizar o ciclo de compilação e deploy via GitHub Actions disparado a cada `push` na branch `main`, garantindo que os segredos de ambiente sejam injetados durante o build e os arquivos estáticos sejam transferidos para o diretório `/public_html/`.
+
+### O que foi alterado
+- **`src/app/layout.tsx`**: Inclusão do componente `<GoogleAnalytics />` logo no início do `<body>` do `RootLayout`, recebendo dinamicamente `process.env.NEXT_PUBLIC_GA_ID`.
+- **`next.config.ts`**:
+  - Adicionada flag `output: 'export'` para direcionar o resultado do `next build` para a pasta `./out/`.
+  - Adicionada configuração `images: { unoptimized: true }`, obrigatória para o componente `next/image` funcionar em compilações totalmente estáticas.
+- **`.github/workflows/deploy.yml`**:
+  - Ajustado parâmetro `local-dir` de `./build/` para `./out/`, refletindo o diretório de saída gerado pelo Next.js em modo export.
+  - Correção na sintaxe do step `actions/setup-node` (`node-version: '20'`).
+
+### O que foi inserido
+- **Dependência**: Pacote oficial `@next/third-parties` instalado e referenciado em `package.json`.
+- **Variável de Ambiente**: Chave `NEXT_PUBLIC_GA_ID` definida em `.env.local`.
+- **Componente**: [`src/components/GoogleAnalytics.tsx`](file:///e:/Projetos/infinic/src/components/GoogleAnalytics.tsx) criado como implementação alternativa modular via `next/script`.
+- **Workflow GitHub Actions**: [`.github/workflows/deploy.yml`](file:///e:/Projetos/infinic/.github/workflows/deploy.yml) com pipeline completa de checkout, cache de pacotes npm, injeção das variáveis de ambiente (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GA_ID`), execução de `npm run build` e envio dos arquivos via `SamKirkland/FTP-Deploy-Action@v4.3.5`.

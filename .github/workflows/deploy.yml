@@ -36,6 +36,6 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./out/  # <-- Mude de ./build/ para ./out/ se for Next.js Export / antes estava local-dir: ./build/  # Se usar Vite, mude para ./dist/
+        local-dir: ./out/  # <-- Mude de ./build/ para ./out/ se for Next.js Export
         server-dir: /public_html/  # Caminho da pasta pública no seu servidor
 
