@@ -8,22 +8,26 @@ export const enviarNotificacaoOrcamento = inngest.createFunction(
     { id: "enviar-alerta-orcamento", name: "Alerta de Novo Orçamento" },
     { event: "app/orcamento.recebido" }, // Nome do evento que o Supabase vai disparar
     async ({ event, step }) => {
-
         // Pegamos os dados enviados pelo formulário
-        const { nome, email, telefone, mensagem } = event.data;
+        const { nome, email, telefone, mensagem } = event.data as {
+            nome: string;
+            email: string;
+            telefone: string;
+            mensagem: string;
+        };
 
         // Tentativa resiliente de envio usando o Loops.so
         await step.run("enviar-email-loops", async () => {
             const response = await fetch("https://loops.so", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${process.env.LOOPS_API_KEY}`,
+                    Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    // Substitua pelo ID do ID do seu template transacional criado no Loops
+                    // Certifique-se de substituir pelo seu ID real do Loops abaixo (ex: cl...)
                     transactionalId: "cmu69y7uq0sn40jxtivng409i",
-                    email: "onlineproducoes@gmail.com", // O e-mail onde VOCÊ quer receber o aviso
+                    email: "seu-onlineproducoes@gmail.com-de-alerta@infinic.com.br", // O e-mail onde VOCÊ quer receber o aviso
                     dataVariables: {
                         nomeCliente: nome,
                         emailCliente: email,
