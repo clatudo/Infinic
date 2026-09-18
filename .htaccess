@@ -1,0 +1,5 @@
+DirectoryIndex index.html
+Options -Indexes
+
+# Fallback para página 404
+ErrorDocument 404 /404.html

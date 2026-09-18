@@ -119,3 +119,35 @@ Em TypeScript, `interface` não possui assinatura de índice de string implícit
 - **Variável de Ambiente**: Chave `NEXT_PUBLIC_GA_ID` definida em `.env.local`.
 - **Componente**: [`src/components/GoogleAnalytics.tsx`](file:///e:/Projetos/infinic/src/components/GoogleAnalytics.tsx) criado como implementação alternativa modular via `next/script`.
 - **Workflow GitHub Actions**: [`.github/workflows/deploy.yml`](file:///e:/Projetos/infinic/.github/workflows/deploy.yml) com pipeline completa de checkout, cache de pacotes npm, injeção das variáveis de ambiente (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_GA_ID`), execução de `npm run build` e envio dos arquivos via `SamKirkland/FTP-Deploy-Action@v4.3.5`.
+
+---
+
+## [2026-09-17 23:30] - Adequação do Inngest v4, Integração com Loops.so e Compatibilidade com Static Export (Deploy FTP)
+
+### Arquivos Modificados / Removidos
+- [`src/inngest/client.ts`](file:///e:/Projetos/infinic/src/inngest/client.ts) *(Modificado)*
+- [`src/features/lead-capture/services/leadService.ts`](file:///e:/Projetos/infinic/src/features/lead-capture/services/leadService.ts) *(Restaurado e Validado)*
+- `src/app/api/inngest/route.ts` *(Removido para compatibilidade estática)*
+- `src/app/api/v1/inngest/route.ts` *(Removido para compatibilidade estática)*
+
+### Motivação Técnica
+1. **Conformidade com Inngest SDK v4**: O pacote `inngest` instalado (`^4.20.0`) alterou a assinatura da função `inngest.createFunction` para exigir apenas 2 argumentos (o objeto de opções unificado com `triggers` e a função de callback `handler`). O padrão anterior de 3 argumentos causava o erro `TS2554: Expected 2 arguments, but got 3` e impedia a inferência dos tipos de contexto `event` e `step`.
+2. **Correção de Endpoint da API do Loops.so**: A chamada `fetch` para envio de e-mails transacionais utilizava a URL genérica `"https://loops.so"`, necessitando ser atualizada para o endpoint oficial de transações `"https://app.loops.so/api/v1/transactional"`.
+3. **Resolução de Incompatibilidade de Static Export com CI/CD FTP**: O pipeline de deploy do GitHub Actions falhou com `exit code 1` ao executar `npm run build`. O log revelou o erro `export const dynamic = "force-static" not configured on route "/api/v1/inngest" with "output: export"`. Como a aplicação utiliza `output: 'export'` no `next.config.ts` para distribuição estática via FTP (`public_html`) sem runtime Node.js ativo no servidor, rotas de API dinâmicas de servidor (`/api/...`) e Server Actions (`"use server"`) são rejeitadas pelo compilador do Next.js.
+4. **Resolução de Falha no Supabase Database Webhook**: No painel do Supabase, tentativas de criar Database Webhooks automáticos falharam com `ERROR: 3F000: schema "supabase_functions" does not exist` e `ERROR: 42883: function supabase_functions.http_request() does not exist` devido à falta de migrações internas da UI. A arquitetura foi ajustada para utilizar a extensão nativa `pg_net` (`net.http_post`) via Trigger PostgreSQL no Supabase, garantindo disparo assíncrono e não-bloqueante direto para o Loops, mantendo a chave de API segura no banco sem expor ao frontend.
+
+### O que foi alterado
+- **`src/inngest/client.ts`**:
+  - Parâmetro `createFunction` ajustado para a assinatura de 2 argumentos: `{ id, name, triggers: [{ event: "app/orcamento.recebido" }] }` no primeiro argumento e a função handler no segundo argumento.
+  - URL de requisição ao Loops atualizada de `"https://loops.so"` para `"https://app.loops.so/api/v1/transactional"`.
+- **`src/features/lead-capture/services/leadService.ts`**:
+  - Garantida a persistência direta via cliente do navegador `@supabase/ssr` (`createClient`), assegurando 100% de compatibilidade com export estático (`output: 'export'`).
+  - Remoção de diretivas de Server Action (`"use server"`), mantendo a execução independente de servidor Node.js.
+
+### O que foi inserido / Padronizado
+- **Script SQL de Notificação via Supabase (`pg_net`)**:
+  - Criada Trigger PostgreSQL e função `enviar_email_loops_orcamento` no Supabase utilizando `net.http_post` da extensão `pg_net`.
+  - Disparo automático de requisição HTTP POST para a API do Loops a cada novo `INSERT` na tabela `lead_captures`, transmitindo variáveis (`nomeCliente`, `emailCliente`, `telefoneCliente`, `mensagemCliente`) de forma assíncrona.
+- **Validação de Build Local**:
+  - Cache corrompido `.next` expurgado.
+  - Execução bem-sucedida de `npm run build` com compilação de todas as 10 rotas estáticas para o diretório `./out/` (código de saída 0).
