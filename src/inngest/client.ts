@@ -6,10 +6,10 @@ export const inngest = new Inngest({ id: "infinic-site" });
 // Esta é a função resiliente que cuida do envio do e-mail
 export const enviarNotificacaoOrcamento = inngest.createFunction(
     { id: "enviar-alerta-orcamento", name: "Alerta de Novo Orçamento" },
-    { event: "app/orcamento.recebido" }, // Nome do evento que o Supabase vai disparar
+    { event: "app/orcamento.recebido" }, // Nome do evento
     async ({ event, step }) => {
-        // Pegamos os dados enviados pelo formulário
-        const { nome, email, telefone, mensagem } = event.data as {
+        // Forçamos o TypeScript a entender a estrutura dos dados recebidos
+        const data = event.data as {
             nome: string;
             email: string;
             telefone: string;
@@ -25,14 +25,13 @@ export const enviarNotificacaoOrcamento = inngest.createFunction(
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    // Certifique-se de substituir pelo seu ID real do Loops abaixo (ex: cl...)
-                    transactionalId: "cmu69y7uq0sn40jxtivng409i",
-                    email: "seu-onlineproducoes@gmail.com-de-alerta@infinic.com.br", // O e-mail onde VOCÊ quer receber o aviso
+                    transactionalId: "cmu69y7uq0sn40jxtivng409i", // <-- Cole seu ID do Loops aqui
+                    email: "onlineproducoes@gmail.com", // <-- Seu e-mail de administrador
                     dataVariables: {
-                        nomeCliente: nome,
-                        emailCliente: email,
-                        telefoneCliente: telefone,
-                        mensagemCliente: mensagem,
+                        nomeCliente: data.nome,
+                        emailCliente: data.email,
+                        telefoneCliente: data.telefone,
+                        mensagemCliente: data.mensagem,
                     },
                 }),
             });
@@ -46,3 +45,9 @@ export const enviarNotificacaoOrcamento = inngest.createFunction(
         });
     }
 );
+
+
+
+// Certifique-se de substituir pelo seu ID real do Loops abaixo (ex: cl...)
+//transactionalId: "cmu69y7uq0sn40jxtivng409i",
+//email: "onlineproducoes@gmail.com", // O e-mail onde VOCÊ quer receber o aviso
