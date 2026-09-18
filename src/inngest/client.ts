@@ -21,7 +21,7 @@ export const enviarNotificacaoOrcamento = inngest.createFunction(
 
         // Tentativa resiliente de envio usando o Loops.so
         await step.run("enviar-email-loops", async () => {
-            const response = await fetch("https://loops.so", {
+            const response = await fetch("https://app.loops.so/api/v1/transactional", {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${process.env.LOOPS_API_KEY}`,
