@@ -151,3 +151,20 @@ Em TypeScript, `interface` não possui assinatura de índice de string implícit
 - **Validação de Build Local**:
   - Cache corrompido `.next` expurgado.
   - Execução bem-sucedida de `npm run build` com compilação de todas as 10 rotas estáticas para o diretório `./out/` (código de saída 0).
+
+---
+
+## [2026-09-18 10:50] - Ativação de trailingSlash para resolução de erro 403 Forbidden no Apache/cPanel
+
+### Arquivo Modificado
+- [`next.config.ts`](file:///e:/Projetos/infinic/next.config.ts)
+
+### Motivação Técnica
+Ao utilizar o Next.js com `output: 'export'` sem a flag `trailingSlash: true`, as rotas estáticas eram geradas como arquivos soltos na raiz (ex: `conserto-celular-tablet.html`), enquanto diretórios físicos com o mesmo nome (`conserto-celular-tablet/`) eram criados para metadados de build (`__next._full.txt`). 
+
+Quando o deploy é realizado via FTP para servidores Apache/cPanel (`public_html`), qualquer requisição com barra final (ex: `https://infinic.com.br/conserto-celular-tablet/`) ou redirecionamento do `mod_dir` do Apache faz o servidor buscar um arquivo de índice padrão (`index.html`) dentro da referida pasta. Como o arquivo `index.html` não existia dentro da pasta e a listagem de diretórios (`Options -Indexes`) é desabilitada por padrão de segurança na hospedagem, o servidor web rejeitava a conexão retornando **HTTP 403 Forbidden**.
+
+### O que foi inserido
+- Propriedade `trailingSlash: true` no objeto `nextConfig` em [`next.config.ts`](file:///e:/Projetos/infinic/next.config.ts).
+- Com essa definição, o Next.js passa a estruturar a saída estática como `out/[rota]/index.html`, garantindo resolução direta e imediata das páginas pelo Apache tanto em acessos diretos via navegador quanto em recarregamentos (F5) e cliques externos.
+

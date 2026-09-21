@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Bloqueio de rotas administrativas/privadas (se houver)
+Disallow: /api/
+Disallow: /admin/
+
+# Apontamento do sitemap
+Sitemap: https://infinic.com.br/src/app/sitemap.xml
